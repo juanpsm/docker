@@ -1,4 +1,4 @@
 # banana
 
-uma delicia
-caroço
+uma delicia caroço
+
