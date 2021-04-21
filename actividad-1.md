@@ -1,44 +1,46 @@
 # Actividad 1
-#### Fundamentos de docker
 
-### cli de docker
+### Fundamentos de docker
 
-#### Referencias
+## cli de docker
+
+### Referencias
 
 * Para resolver los ejercicios se recomienda seguir ladocumentación oficial de Docker.
 * Adicionalmente tome como referencia los comandos básicos detallados a continuación. Serán utilizados a lo largo de la capacitación.
-  - `docker run`
-  - `docker ps`
-  - `docker logs`
-  - `docker image`
-  - `docker start`
-  - `docker stop`
-  - `docker rm`
-  - `docker history`
-  - `docker tag`
-  - `docker restart`
-  - `docker rmi`
-  - `docker commit`
-  - `docker exec`
-  - `docker search`
+
+  * `docker run`
+  * `docker ps`
+  * `docker logs`
+  * `docker image`
+  * `docker start`
+  * `docker stop`
+  * `docker rm`
+  * `docker history`
+  * `docker tag`
+  * `docker restart`
+  * `docker rmi`
+  * `docker commit`
+  * `docker exec`
+  * `docker search`
 
   Nota: para ver las opciones de cada comando utilizar `–help`. Ejemplo: `docker comando –help`
 
-#### Ejercicios
+### Ejercicios
 
 1. Instalar Docker:
    * Realizar la instalación en su máquina siguiendo los pasos de acuerdo a su Sistema Operativo.
 2. Correr su primer aplicación con contenedores: “Hello World”
 
-    `docker run hello‑world`
+   `docker run hello‑world`
 
    * ¿Qué imagen se utiliza para instanciar el contenedor?
    * ¿Qué puede decir de los mensajes que se pueden ver en la consola?
 
 3. Luego de correr el contenedor de la aplicación “Hello World” ¿Que sucede con el contenedor que se instanció? ¿Continúa existiendo? Utilize el comando **docker ps** y **docker ps ‑a**.
-4. Correr un nuevo contenedor basado en la imagen “ubuntu:18.04” 
+4. Correr un nuevo contenedor basado en la imagen “ubuntu:18.04”
 
-    `docker run ubuntu:18.04 /bin/bash`
+   `docker run ubuntu:18.04 /bin/bash`
 
    * Utilizando **docker ps** ¿Qué sucedió con el estado del contenedor?
    * Investigue el parámetro ‑i ‑t del comando **docker run**
@@ -75,7 +77,7 @@
 10. Inicie un contenedor de nginx. Luego utilicedocker execpara ingresar al conentedor y modificar el index.html
 11. Indique la diferencia entre las políticas de reinicio disponibles para un contenedor.
 
-#### Entregables
+### Entregables
 
 Los ejercicios a entregar son 2, 3, 6, 7, 9, 10, 12. Las entregas deben responder a las preguntas de cada ejercicio o los comandos usados para completarlo.
 
