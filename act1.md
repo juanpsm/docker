@@ -1,4 +1,6 @@
- Actividad 1
+# act1
+
+Actividad 1
 
 ### Fundamentos de docker
 
@@ -80,3 +82,4 @@
 ### Entregables
 
 Los ejercicios a entregar son 2, 3, 6, 7, 9, 10, 12. Las entregas deben responder a las preguntas de cada ejercicio o los comandos usados para completarlo.
+
