@@ -1,8 +1,5 @@
----
-description: Fundamentos de docker
----
-
 # Actividad 1
+#### Fundamentos de docker
 
 ### cli de docker
 
