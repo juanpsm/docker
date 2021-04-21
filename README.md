@@ -10,23 +10,20 @@ description: Fundamentos de docker
 
 * Para resolver los ejercicios se recomienda seguir ladocumentación oficial de Docker.
 * Adicionalmente tome como referencia los comandos básicos detallados a continuación. Serán utilizados a lo largo de la capacitación.
-
-  ```text
-        - docker run
-        - docker ps
-        - docker logs
-        - docker image
-        - docker start
-        - docker stop
-        - docker rm
-        - docker history
-        - docker tag
-        - docker restart
-        - docker rmi
-        - docker commit
-        - docker exec
-        - docker search
-  ```
+  - `docker run`
+  - `docker ps`
+  - `docker logs`
+  - `docker image`
+  - `docker start`
+  - `docker stop`
+  - `docker rm`
+  - `docker history`
+  - `docker tag`
+  - `docker restart`
+  - `docker rmi`
+  - `docker commit`
+  - `docker exec`
+  - `docker search`
 
   Nota: para ver las opciones de cada comando utilizar `–help`. Ejemplo: `docker comando –help`
 
