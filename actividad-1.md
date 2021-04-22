@@ -434,11 +434,12 @@ Remove one or more containers
   ab22d5bcccae65acfd6f9d10de0567684168d0dd56de0be36ffd0eb2960f4f28
 
   ~$ docker exec -it ab22 /bin/bash
+  
   root@ab22d5bcccae:/# find / -name "index.html"
   /usr/share/nginx/html/index.html
   find: '/proc/32/map_files': Permission denied
-  root@ab22d5bcccae:/# sed -i 's/nginx/Tijuana/g' /usr/share/nginx/html/index.html 
-  root@ab22d5bcccae:/#
+  
+  root@ab22d5bcccae:/# sed -i 's/nginx/Tijuana/g' /usr/share/nginx/html/index.html
 ```
 
 ![11](.gitbook/assets/11.png)
