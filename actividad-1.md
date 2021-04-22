@@ -9,9 +9,7 @@
 * Para resolver los ejercicios se recomienda seguir la documentación oficial de Docker.
 * Adicionalmente tome como referencia los comandos básicos detallados a continuación. Serán utilizados a lo largo de la capacitación.
 
-  * `docker run`
-
-    Run a command in a new container
+  * `docker run`Run a command in a new container
 
     ```text
       -a, --attach list        Attach to STDIN, STDOUT or STDERR      
@@ -30,9 +28,7 @@
       -w, --workdir string     Working directory inside the container
     ```
 
-  * `docker ps`
-
-      List containers
+  * `docker ps`List containers
 
     ```text
       -a, --all             Show all containers (default shows just running)
