@@ -278,7 +278,7 @@ Remove one or more containers
 
 * Listar los contenedores que se están ejecutando. ¿Qué información relevante puede observar en la columna PORTS?
 
-    Se puede observar el valor `80/tcp` en esa columna. En ella se muestran los puertos o rango de puertos expuestos o publicados y el protocolo utilizado. En este caso el puerto 80 con protocolo tcp del contenedor.
+    Se puede observar el valor `80/tcp` en esa columna. En ella se muestran los puertos o rango de puertos ocupados, expuestos o publicados y el protocolo utilizado. En este caso se encuentra ocupado el puerto 80 con protocolo tcp del contenedor.
 
   ```text
     $ docker ps
