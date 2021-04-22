@@ -6,7 +6,7 @@
 
 ### Referencias
 
-* Para resolver los ejercicios se recomienda seguir ladocumentación oficial de Docker.
+* Para resolver los ejercicios se recomienda seguir la documentación oficial de Docker.
 * Adicionalmente tome como referencia los comandos básicos detallados a continuación. Serán utilizados a lo largo de la capacitación.
 
   * `docker run`
@@ -99,7 +99,7 @@
          sudo groupadd docker
          # Añadir usuarios
          sudo usermod -aG docker $USER
-         # Rfrescar permisos
+         # Refrescar permisos
          newgrp docker
      ```
 
