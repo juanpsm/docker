@@ -1,0 +1,9 @@
+FROM ubuntu:18.04
+ 
+# Instalar Nginx y configurar una página personalizada
+RUN apt-get update && apt-get install -y nginx \
+    && rm -rf /var/lib/apt/lists/*
+RUN echo "<h1>Hola Mundo!!</h1>" > /var/www/html/index.html
+ 
+EXPOSE 80
+CMD    ["nginx", "-g", "daemon off;"]
