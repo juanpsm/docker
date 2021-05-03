@@ -89,17 +89,14 @@ $ docker pull pibytes/docker-test:prueba
 > El comando `dd` copia archivos. El siguiente ejemplo muestra como crear un archivo de 1MB lleno de ceros.
 
 ```sh
-dd if =/dev/zero bs=1M count=1 of=created-file
+dd if=/dev/zero bs=1M count=1 of=created-file
 ```
-
 Ejemplo de uso de la imagen mikroways/file‑creator:
-
 ```sh
 docker run mikroways/file-creator # crea un archivo de 10 MB en /tmp
-docker run mikroways/file-creator 100 M # creará un archivo de 100 MB en /tmp
+docker run mikroways/file-creator 100M # creará un archivo de 100 MB en /tmp
 ```
 Puede verificar el tamaño del contenedor resultante usando:
-
 ```sh
 docker ps - asn 2
 ```
