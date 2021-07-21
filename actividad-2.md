@@ -74,7 +74,7 @@ docker login registry.gitlab.com
 
 Nos paramos en el directorio donde tenemos el Dockerfile deseado. Luego el nombre de la imagen debe ser:
 
-ee
+`registry.gitlab.com/`**`gitlab-user`**`/`**`gitlab-repo`**
 
 egistry.gitlab.com/juanpsm/docker-test
 
