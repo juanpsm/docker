@@ -65,6 +65,8 @@ $ curl localhost:8080
 * Si no tiene una cuenta en Docker Hub, registrarse. Una vez creada la cuenta, iniciar sesión y crear un nuevo repositorio en el cual subirá su imagen docker. Para ello deberá iniciar sesión desde la cli de docker usando: `docker login`.
 * Si no tienen una cuenta en GitLab, [registrarse](https://gitlab.com). Una vez creada la cuenta, iniciar sesión y crear un nuevo repositorio en el cual subirá su imagen Docker. Al crear un nuevo repositorio, en el panel de la izquierda, se tiene un menú **Packages & Registries &gt; Container Registry**. Ingresando a este item se indican las acciones necesarias para subir la imagen a la registry de GitLab.
 
+#### Gitlab
+
 Para Gitlab, luego de seguir los pasos de la consigna:
 
 ```bash
@@ -76,41 +78,138 @@ Nos paramos en el directorio donde tenemos el Dockerfile deseado. Luego el nombr
 
 `registry.gitlab.com/`**`gitlab-user`**`/`**`gitlab-repo`**
 
+En mi caso:
+
+```text
+docker build -t registry.gitlab.com/juanpsm/actividades-docker .
+docker push registry.gitlab.com/juanpsm/actividades-docker
+```
+
+Para ver si anda, eliminamos la imagen del host y volvamos a correrla. Veremos que la baja del repositorio recién creado
+
 egistry.gitlab.com/juanpsm/docker-test
 
 ```text
-# Nos paramos en el directorio donde tenemos el Dockerfile deseado
-docker build -t registry.gitlab.com/juanpsm/docker-test .
-docker push registry.gitlab.com/juanpsm/docker-test
-
-# Veamos si anda, eliminamos la imagen del host y volvamos a correrla.
-# Veremos que la baja del repositorio recien creado
-$ docker image rm registry.gitlab.com/pibyte/docker-test:latest 
-$ docker run -dit --rm --name gitlab -p 8080:80 registry.gitlab.com/pibyte/docker-test
-Unable to find image 'registry.gitlab.com/pibyte/docker-test:latest' locally
+$ docker image rm registry.gitlab.com/juanpsm/actividades-docker:latest 
+$ docker run -dit --rm --name gitlab -p 8080:80 registry.gitlab.com/juanpsm/actividades-docker
+Unable to find image 'registry.gitlab.com/juanpsm/actividades-docker:latest' locally
 latest: Pulling from pibyte/docker-test
 Digest: sha256:557e0c3a8ee17384ac8c08d9a67250ca68e7549f42579652952ca9e2d41f79fd
-Status: Downloaded newer image for registry.gitlab.com/pibyte/docker-test:latest
-3f84cb204329e5c3e11c2d00c774cf6aaa375eadf647a8bebb29469133e699ce
+Status: Downloaded newer image for registry.gitlab.com/juanpsm/actividades-docker:latest
+b9f2349009978d1c75c3dd0b48dab86d68c397f4d2b9de7237c20571d4065f0b
 
 $ curl localhost:8080
 <html><body><h1>¡Hola Mundo!</h1></body></html>
 ```
 
-Dockerhub:
+#### Dockerhub:
 
-```text
-$ docker build -t pibytes/docker-test:prueba .
-$ docker push pibytes/docker-test:prueba
+Luego de crear la cuenta de Dockerhub, loguearse:
+
+```bash
+docker login
+# Introducir credenciales de dockerhub
 ```
 
-Se puede bajar con
+```text
+$ docker build -t juanpsm/docker-test:prueba .
+$ docker push juanpsm/docker-test:prueba
+```
+
+Probar:
 
 ```text
-$ docker pull pibytes/docker-test:prueba
+$ docker image rm juanpsm/docker-test:prueba
+$ docker run -it --rm --name dockerhub-test -p 8080:80 juanpsm/docker-test:prueba
+$ docker pull juanpsm/docker-test:prueba
+Unable to find image 'juanpsm/docker-test:prueba' locally
+prueba: Pulling from juanpsm/docker-test
+Digest: sha256:557e0c3a8ee17384ac8c08d9a67250ca68e7549f42579652952ca9e2d41f79fd
+Status: Downloaded newer image for juanpsm/docker-test:prueba
+a6080f434c8c9a212dd6fb8c9a6f015462ebf6730b218b0235f8eff8fc2e42cc
+
+$ curl localhost:8080
+<html><body><h1>¡Hola Mundo!</h1></body></html>
 ```
 
 ### **3.** Crear una imagen en donde al instanciar el contenedor debe imprimir **“HolaMundo”**. Para esto deberá utilizar un ENTRYPOINT en el Dockerfile y **CMD** para parametrizar el mensaje que por defecto será **Hola mundo**.
+
+Probemos la diferencia entre CMD y ENTRYPOINT
+
+`Dockerfile.cmd`:
+
+```text
+FROM alpine
+CMD ["echo", "hello cmd"]
+```
+
+```text
+$ docker build -t juanpsm/docker-test:cmd -f Dockerfile.cmd .
+$ docker run --rm juanpsm/docker-test:entry-cmd gg
+hello cmd
+
+$ docker run --rm juanpsm/docker-test:cmd "prueba"
+docker: Error response from daemon: OCI runtime create failed: container_linux.go:380: starting container process caused: exec: "prueba": executable file not found in $PATH: unknown.
+
+$ docker run --rm juanpsm/docker-test:cmd echo "prueba"
+prueba
+
+$ docker run --rm juanpsm/docker-test:cmd ls
+bin
+dev
+etc
+...
+```
+
+Funciona pero no puedo pasarle el parámetro que quiero que corra el `echo` directamente. Hay que volver a ponerle el comando y lo pisa, pero lo mismo sucedería con cualquier otro comando como `ls`
+
+Así si quiero que siempre si o si corra el `echo` lo tengo que poner en el `ENTRYPOINT`
+
+`Dockerfile.entry`:
+
+```text
+FROM alpine
+ENTRYPOINT ["echo", "hello entry"]
+```
+
+```text
+$ docker build -t juanpsm/docker-test:entry -f Dockerfile.entry .
+$ docker run --rm juanpsm/docker-test:entry
+hello entry
+
+$ docker run --rm juanpsm/docker-test:entry prueba
+hello entry prueba
+
+$ docker run --rm juanpsm/docker-test:entry echo prueba
+hello entry echo prueba
+
+$ docker run --rm --entrypoint="" juanpsm/docker-test:entry echo prueba
+prueba
+```
+
+Ahora toma los parametros, pero no los reemplaza, los anexa luego del declarado en el `ENTRYPOINT`. Para pisarlo hay que indicar `--entrypoint=""`.
+
+`Dockerfile.entry.cmd`:
+
+```text
+FROM alpine
+ENTRYPOINT ["echo"]
+CMD ["Hola mundo"]
+```
+
+```text
+$ docker build -t juanpsm/docker-test:entry-cmd -f Dockerfile.entry.cmd .
+$ docker run --rm juanpsm/docker-test:entry-cmd
+Hola mundo
+
+$ docker run --rm juanpsm/docker-test:entry-cmd prueba
+prueba
+
+$ docker run --rm juanpsm/docker-test:entry-cmd echo prueba
+echo prueba
+```
+
+Combinando ambos comandos, `CMD` contiene los parámetros que se le pasan al `ENTRYPOINT`. Los primeros son mas sencillos de reemplazar. El contenedor siempre ejecuta `echo` con lo que le pase en el `run` \(a menos que `--entrypoint=""`\) y si no recibe ningún parametro escribe por defecto  `Hola mundo`
 
 ### **4.** Cree un Dockerfile para generar una imagen llamada **mikroways/file‑creator**.
 
