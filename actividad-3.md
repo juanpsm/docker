@@ -166,8 +166,8 @@ DRIVER    VOLUME NAME
 
   ```bash
   docker run -p 80:80 \
-    -e 'PGADMIN\_DEFAULT\_EMAIL=docker@mikroways.net' \
-    -e 'PGADMIN\_DEFAULT\_PASSWORD=mikroways' \
+    -e 'PGADMIN_DEFAULT_EMAIL=docker@mikroways.net' \
+    -e 'PGADMIN_DEFAULT_PASSWORD=mikroways' \
     --link psql-docker:db -d dpage/pgadmin4
   ```
 
@@ -195,27 +195,95 @@ $ docker inspect postgres:12
                 "/var/lib/postgresql/data": {}
             },
 ...
-$ docker volume create psql-vol
-psql-vol
+$ docker volume create psql-data
+psql-data
 $ docker run -d --name=psql-docker \
- -e POSTGRES_PASSWORD=psql-docker -p 5432:5432 \
- --mount source=psql-vol,target=/var/lib/postgresql/data \
+ -e 'POSTGRES_PASSWORD=psql-docker' \
+ -e 'POSTGRES_USER=postgres' \
+ -e 'POSTGRES_DB=TEST_SM' \
+ -p 5432:5432 \
+ --mount type=volume,source=psql-data,target=/var/lib/postgresql/data \
  postgres:12
 
-$ docker volume inspect psql-vol 
+$ docker volume inspect psql-data 
 [
     {
-        "CreatedAt": "2021-07-22T03:19:45-03:00",
+        "CreatedAt": "2021-07-22T15:54:18-03:00",
         "Driver": "local",
-        "Labels": null,
-        "Mountpoint": "/var/lib/docker/volumes/psql-vol/_data",
-        "Name": "psql-vol",
-        "Options": null,
+        "Labels": {},
+        "Mountpoint": "/var/lib/docker/volumes/psql-data/_data",
+        "Name": "psql-data",
+        "Options": {},
         "Scope": "local"
     }
 ]
 
+$ docker run -p 5555:80 \
+  -e 'PGADMIN_DEFAULT_EMAIL=docker@mikroways.net' \
+  -e 'PGADMIN_DEFAULT_PASSWORD=mikroways' \
+  --link psql-docker:db -d dpage/pgadmin4
+
+$ docker logs $(docker ps -lq)
+NOTE: Configuring authentication for SERVER mode.
+
+[2021-07-22 18:56:47 +0000] [1] [INFO] Starting gunicorn 20.1.0
+[2021-07-22 18:56:47 +0000] [1] [INFO] Listening at: http://[::]:80 (1)
+[2021-07-22 18:56:47 +0000] [1] [INFO] Using worker: gthread
+[2021-07-22 18:56:48 +0000] [92] [INFO] Booting worker with pid: 92
+
 ```
+
+En la interfaz cuando queria agregar un servidos no reconocía **db**
+entonces:
+
+```bash
+$ docker inspect psql-docker
+...
+"Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "22c689dcaed471ddcf89d85759e9046597885e25b843f25a6873669288ad062d",
+                    "EndpointID": "c4d281f08bb0e2c7c7fc44c1338df1016b9639c894f86143b859822f16631fa4",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+
+```
+
+Probando con el IP en el campo name/address funca.
+Creo bd "prueba".
+
+```bash
+$ docker rm -f psql-docker
+$ sudo ls /var/lib/docker/volumes/psql-data/_data
+base	      pg_dynshmem    pg_logical    pg_replslot	 pg_stat      pg_tblspc    pg_wal		 postgresql.conf
+global	      pg_hba.conf    pg_multixact  pg_serial	 pg_stat_tmp  pg_twophase  pg_xact		 postmaster.opts
+pg_commit_ts  pg_ident.conf  pg_notify	   pg_snapshots  pg_subtrans  PG_VERSION   postgresql.auto.conf
+
+$ docker run -d --name=psql-docker \
+ -e 'POSTGRES_PASSWORD=psql-docker' \
+ -e 'POSTGRES_USER=postgres' \
+ -e 'POSTGRES_DB=TEST_SM' \
+ -p 5432:5432 \
+ --mount type=volume,source=psql-data,target=/var/lib/postgresql/data \
+ postgres:12
+```
+
+Si se recarga la pagina de pgAdmin, vuelve a aparecer la db lo más bien.
+
+Acceder a la BD:
+
+```bash
+docker exec -it psql-docker psql -U postgres
+psql (12.7 (Debian 12.7-1.pgdg100+1))
+Type "help" for help.
+
+postgres=# 
+```
+
+No pide password ya que la obtiene de las variables de entorno seteadas al momento de crear el contenedor.
+
 ### **10.** Verifiqué el espacio utilizado por docker: `docker system df`
 
 ### **11.** Libere todo el espacio utilizado por volúmenes docker
@@ -226,4 +294,3 @@ $ docker volume inspect psql-vol
 ## Entregables
 
 ### Los ejercicios a entregar son sobre volúmenes y únicamente 2, 3 y 9. Las entregas deben responder a las preguntas de cada ejercicio o los comandos usados para completarlos
-
