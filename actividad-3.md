@@ -19,7 +19,7 @@ Descargue desde la registry creada en el ejercicio 1, la imagen eliminada recien
 
 ## Volúmenes
 
-### **1.** Crear un contenedor con un **volumen anonimo**
+### **1.** Crear un contenedor con un **volumen anónimo**
 
 * Crear un archivo dentro del directorio definido como un volumen.
 * Verificar el estado del contenedor y los volúmenes creados.
