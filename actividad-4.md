@@ -300,12 +300,30 @@ round-trip min/avg/max = 0.150/0.185/0.218 ms
 
 ### **1.** Lance el contenedor a partir de la imagen **progrium/stress**
 
-    ```bash
-    docker run --rm progrium/stress -c 1 --vm 1 --vm-bytes 200m -t 60
-    ```
+```bash
+docker run --rm progrium/stress -c 1 --vm 1 --vm-bytes 200m -t 60
+```
 
-    > Mientras corre el comando durante 1 minuto, verifique las estadísticas de consumo: 
-    > **`docker stats $(docker ps -ql)`**
+> Mientras corre el comando durante 1 minuto, verifique las estadísticas de consumo:
+> **`docker stats $(docker ps -ql)`**
+
+```bash
+$ docker run --rm progrium/stress -c 1 --vm 1 --vm-bytes 200m -t 60
+...
+stress: dbug: [1] --> hogvm worker 1 [8] forked
+stress: dbug: [1] <-- worker 7 signalled normally
+stress: dbug: [1] <-- worker 8 signalled normally
+stress: info: [1] successful run completed in 60s
+
+# en otra terminal
+$ docker stats $(docker ps -ql)
+CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O   PIDS
+760c2826645b   flamboyant_solomon   203.14%   24.73MiB / 3.719GiB   0.65%     2.88kB / 0B   0B / 0B     3
+```
+
+**¿¿ CPU 200% ??**
+
+El contenedor asigna toda la capacidad de CPU disponible (por cada CPU se tiene 100%).
 
 > **Deshabilite la swap en su PC para la siguientes pruebas:** `sudo swapoff -a`
 
@@ -313,9 +331,50 @@ round-trip min/avg/max = 0.150/0.185/0.218 ms
 
 > Quite la opción `--rm` para poder inspeccionar el contenedor finalizado.
 
+```bash
+$ sudo swapoff -a
+$ docker run -m 128M progrium/stress -c 1 --vm 1 --vm-bytes 200m -t 60
+stress: FAIL: [1] (416) <-- worker 9 got signal 9
+stress: WARN: [1] (418) now reaping child worker processes
+stress: FAIL: [1] (452) failed run completed in 0s
+stress: info: [1] dispatching hogs: 1 cpu, 0 io, 1 vm, 0 hdd
+stress: dbug: [1] using backoff sleep of 6000us
+stress: dbug: [1] setting timeout to 60s
+stress: dbug: [1] --> hogcpu worker 1 [8] forked
+stress: dbug: [1] --> hogvm worker 1 [9] forked
+stress: dbug: [1] <-- worker 8 reaped
+```
+
 * ¿Cuál es el exit code?
 
+    ```bash
+    $ docker ps -al
+    CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS                      PORTS     NAMES
+    e6f46e31920c   progrium/stress   "/usr/bin/stress --v…"   39 seconds ago   Exited (1) 35 seconds ago             agitated_cohen
+    ```
+
 * Inspeccionando el contenedor, ¿podemos inferir que fue parado por OOMKiller?
+
+    Sí. Se puede ver el flag `OOMKilled`:
+
+    ```bash
+    $ docker inspect $(docker ps -alq)
+    ...
+    "State": {
+                "Status": "exited",
+                "Running": false,
+                "Paused": false,
+                "Restarting": false,
+                "OOMKilled": true,
+                "Dead": false,
+                "Pid": 0,
+                "ExitCode": 1,
+                "Error": "",
+                "StartedAt": "2021-07-26T16:11:40.68217574Z",
+                "FinishedAt": "2021-07-26T16:11:40.776408033Z"
+            },
+    ...
+    ```
 
 ## Entregables
 
