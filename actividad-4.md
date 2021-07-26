@@ -1,13 +1,16 @@
-﻿# Actividad 4
+---
+description: Redes - Límite de recursos
+---
+
+# Actividad 4
 
 ## Redes
 
-### **1.** Cree dos contenedores basados en alpine de forma interactiva llamados **uno‑default** y **dos‑default** respectivamente. Estos contenedores deben utilizar la red por defecto llamada **bridge** (para lo cual no debe especificar ninguna red usando `--network`). Luego verifique conectividad entre ellos usando el comando **ping**
+### **1.** Cree dos contenedores basados en alpine de forma interactiva llamados **uno‑default** y **dos‑default** respectivamente. Estos contenedores deben utilizar la red por defecto llamada **bridge** \(para lo cual no debe especificar ninguna red usando `--network`\). Luego verifique conectividad entre ellos usando el comando **ping**
 
 > Utilice con el comando **`docker run`** usado para lanzar los contenedores **uno‑default** y **dos‑default** la opción **`-e VAR=uno`** y **`-e VAR=dos`** respectivamente.
 
 * Verifique la ip de cada contenedor usando **`ip add ls`** y ejecute el comando **ping** y la IP del contenedor remoto.
-
 * Repita el procedimiento anterior utilizando el nombre del contenedor remoto. ¿Funciona?
 
 uno‑default:
@@ -78,16 +81,16 @@ round-trip min/avg/max = 0.142/0.167/0.179 ms
 
 * Verifique el comando ping contra el contenedor remoto utilizando ahora el nombre del contenedor. ¿Funciona en todos los contenedores o sólo en el que incluye --link?
 
-    uno-default:
+  uno-default:
 
-    ```bash
+  ```bash
     / # ping dos-default
     ping: bad address 'dos-default'
-    ```
+  ```
 
-    dos-default:
+  dos-default:
 
-    ```bash
+  ```bash
     docker run -it --name dos-default -e VAR=dos --link uno-default alpine 
     / # ping uno-default
     PING uno-default (172.17.0.2): 56 data bytes
@@ -100,13 +103,13 @@ round-trip min/avg/max = 0.142/0.167/0.179 ms
     --- uno-default ping statistics ---
     5 packets transmitted, 5 packets received, 0% packet loss
     round-trip min/avg/max = 0.138/0.173/0.232 ms
-    ```
+  ```
 
 * Verifique además las variables de ambiente en **uno‑default** y **dos‑default** usando el comando **`env`**. ¿Qué observa?
 
-    uno-default:
+  uno-default:
 
-    ```bash
+  ```bash
     / # env
     HOSTNAME=0b75d4c7386a
     SHLVL=1
@@ -115,11 +118,11 @@ round-trip min/avg/max = 0.142/0.167/0.179 ms
     TERM=xterm
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     PWD=/
-    ```
+  ```
 
-    dos-default:
+  dos-default:
 
-    ```bash
+  ```bash
     / # env
     HOSTNAME=dd6bb541f555
     SHLVL=1
@@ -130,9 +133,9 @@ round-trip min/avg/max = 0.142/0.167/0.179 ms
     UNO_DEFAULT_ENV_VAR=uno
     UNO_DEFAULT_NAME=/dos-default/uno-default
     PWD=/
-    ```
+  ```
 
-    El contenedor **dos-default** tiene la variable de ambiente `VAR` de **uno-default** bajo el nombre `UNO_DEFAULT_ENV_VAR`.
+  El contenedor **dos-default** tiene la variable de ambiente `VAR` de **uno-default** bajo el nombre `UNO_DEFAULT_ENV_VAR`.
 
 ### **3.** Cree una red de tipo bridge definida por el usuario y corra dos contenedores basados en alpine de forma interactiva llamados **uno‑user** y **dos‑user**
 
@@ -146,9 +149,9 @@ $ docker network create my-net
 
 * Verifique el comando ping contra el contenedor remoto utilizando ahora el nombre del contenedor. ¿Funciona en todos los contenedores?
 
-    uno-default:
+  uno-default:
 
-    ```bash
+  ```bash
     docker run -it --name uno-default -e VAR=uno --network my-net alpine
     / # ping dos-default
     PING dos-default (172.20.0.3): 56 data bytes
@@ -158,11 +161,11 @@ $ docker network create my-net
     --- dos-default ping statistics ---
     2 packets transmitted, 2 packets received, 0% packet loss
     round-trip min/avg/max = 0.181/0.372/0.564 ms
-    ```
+  ```
 
-    dos-default:
+  dos-default:
 
-    ```bash
+  ```bash
     docker run -it --name dos-default -e VAR=dos --link uno-default --network my-net alpine 
     / # ping uno-default
     PING uno-default (172.20.0.2): 56 data bytes
@@ -172,13 +175,13 @@ $ docker network create my-net
     --- uno-default ping statistics ---
     2 packets transmitted, 2 packets received, 0% packet loss
     round-trip min/avg/max = 0.147/0.183/0.219 ms
-    ```
+  ```
 
 * Verifique además las variables de ambiente en **uno‑user** y **dos‑user** usando el comando **`env`**. ¿Qué observa?
 
-    uno-default:
+  uno-default:
 
-    ```bash
+  ```bash
     / # env
     HOSTNAME=19858ce067a3
     SHLVL=1
@@ -187,11 +190,11 @@ $ docker network create my-net
     TERM=xterm
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     PWD=/
-    ```
+  ```
 
-    dos-default:
+  dos-default:
 
-    ```bash
+  ```bash
     / # env
     HOSTNAME=47bcd42634ed
     SHLVL=1
@@ -200,16 +203,17 @@ $ docker network create my-net
     TERM=xterm
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     PWD=/
-    ```
+  ```
 
-    No se encuentran las variables del otro contenedor.
+  No se encuentran las variables del otro contenedor.
 
 * Desconecte uno de los contenedores mientras desde el contenedor remoto ejecuta el comando ping. Luego vuelva a conectarlo
-    > Para desconectar y conectar contenedores investigue el uso de los comandos **`docker network disconnect`** y **`docker network connect`**.
 
-    uno-default:
+  > Para desconectar y conectar contenedores investigue el uso de los comandos **`docker network disconnect`** y **`docker network connect`**.
 
-    ```bash
+  uno-default:
+
+  ```bash
     / # ping dos-default
     PING dos-default (172.20.0.3): 56 data bytes
     64 bytes from 172.20.0.3: seq=0 ttl=64 time=0.141 ms
@@ -224,9 +228,9 @@ $ docker network create my-net
     --- dos-default ping statistics ---
     20 packets transmitted, 8 packets received, 60% packet loss
     round-trip min/avg/max = 0.141/0.202/0.338 ms
-    ```
+  ```
 
-    Desde otra consola hago el `docker network disconnect my-net dos-default` y la terminal que esta haciendo el ping se queda clavada. Cuando reconecto el contenedor **dos-default** con `docker network connect my-net dos-default` vuelve a recibir los paquetes, pero los que envió en el tiempo desconectado se perdieron. Notar el "salto" en el numero `seq`.
+  Desde otra consola hago el `docker network disconnect my-net dos-default` y la terminal que esta haciendo el ping se queda clavada. Cuando reconecto el contenedor **dos-default** con `docker network connect my-net dos-default` vuelve a recibir los paquetes, pero los que envió en el tiempo desconectado se perdieron. Notar el "salto" en el numero `seq`.
 
 ### **4.** Indique el comando necesario para correr un contenedor que no tenga conexión de red
 
@@ -237,7 +241,7 @@ $ docker run -it --network none alpine
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
        valid_lft forever preferred_lft forever
-/ # 
+/ #
 ```
 
 También funcionan las opciones `--network=none`, `--network='none'` y `--network="none"`.
@@ -304,8 +308,7 @@ round-trip min/avg/max = 0.150/0.185/0.218 ms
 docker run --rm progrium/stress -c 1 --vm 1 --vm-bytes 200m -t 60
 ```
 
-> Mientras corre el comando durante 1 minuto, verifique las estadísticas de consumo:
-> **`docker stats $(docker ps -ql)`**
+> Mientras corre el comando durante 1 minuto, verifique las estadísticas de consumo: **`docker stats $(docker ps -ql)`**
 
 ```bash
 $ docker run --rm progrium/stress -c 1 --vm 1 --vm-bytes 200m -t 60
@@ -323,7 +326,7 @@ CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NE
 
 **¿¿ CPU 200% ??**
 
-El contenedor asigna toda la capacidad de CPU disponible (por cada CPU se tiene 100%).
+El contenedor asigna toda la capacidad de CPU disponible \(por cada CPU se tiene 100%\).
 
 > **Deshabilite la swap en su PC para la siguientes pruebas:** `sudo swapoff -a`
 
@@ -347,17 +350,17 @@ stress: dbug: [1] <-- worker 8 reaped
 
 * ¿Cuál es el exit code?
 
-    ```bash
+  ```bash
     $ docker ps -al
     CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS                      PORTS     NAMES
     e6f46e31920c   progrium/stress   "/usr/bin/stress --v…"   39 seconds ago   Exited (1) 35 seconds ago             agitated_cohen
-    ```
+  ```
 
 * Inspeccionando el contenedor, ¿podemos inferir que fue parado por OOMKiller?
 
-    Sí. Se puede ver el flag `OOMKilled`:
+  Sí. Se puede ver el flag `OOMKilled`:
 
-    ```bash
+  ```bash
     $ docker inspect $(docker ps -alq)
     ...
     "State": {
@@ -374,8 +377,9 @@ stress: dbug: [1] <-- worker 8 reaped
                 "FinishedAt": "2021-07-26T16:11:40.776408033Z"
             },
     ...
-    ```
+  ```
 
 ## Entregables
 
 ### Los ejercicios a entregar de la sección redes son el 1, 2, 3, 4 y 5. Para la sección de límites de recursos son el 1 y 2. Las entregas deben responder a las preguntas de cada ejercicio o los comandos usados para completarlos
+

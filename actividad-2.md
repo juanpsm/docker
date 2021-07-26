@@ -1,3 +1,7 @@
+---
+description: Construcción de imágenes
+---
+
 # Actividad 2
 
 ## Construcción de imágenes
@@ -209,7 +213,7 @@ $ docker run --rm juanpsm/docker-test:entry-cmd echo prueba
 echo prueba
 ```
 
-Combinando ambos comandos, `CMD` contiene los parámetros que se le pasan al `ENTRYPOINT`. Los primeros son mas sencillos de reemplazar. El contenedor siempre ejecuta `echo` con lo que le pase en el `run` \(a menos que `--entrypoint=""`\) y si no recibe ningún parametro escribe por defecto  `Hola mundo`
+Combinando ambos comandos, `CMD` contiene los parámetros que se le pasan al `ENTRYPOINT`. Los primeros son mas sencillos de reemplazar. El contenedor siempre ejecuta `echo` con lo que le pase en el `run` \(a menos que `--entrypoint=""`\) y si no recibe ningún parametro escribe por defecto `Hola mundo`
 
 ### **4.** Cree un Dockerfile para generar una imagen llamada **mikroways/file‑creator**
 
@@ -243,9 +247,7 @@ Indique qué interpreta en la salida del tamaño del contenedor lanzado.
 
 WORKDIR /path/to/workdir
 
-La instrucción WORKDIR setea el directorio de trabajo para los subsiguientes RUN,CMD,ENTRYPOINT, COPY y ADD.
-Si la ruta no existe se crea. Se puede declarar varias veces y en cada una la ruta es relativa a la anterior.
-También puede resolver variables de entorno, si estas fueron creadas previamente en un ENV.
+La instrucción WORKDIR setea el directorio de trabajo para los subsiguientes RUN,CMD,ENTRYPOINT, COPY y ADD. Si la ruta no existe se crea. Se puede declarar varias veces y en cada una la ruta es relativa a la anterior. También puede resolver variables de entorno, si estas fueron creadas previamente en un ENV.
 
 `WORKDIR /path/to/workdir`
 
@@ -278,9 +280,7 @@ $ docker inspect $(docker ps -lq) --format '{{ .Path }} {{ join .Args " " }}'
 
 El problema es que no se "unen" los parámetros. No encontré una manera de unirlos
 
-Entonces, cambiamos el ENTRYPOINT
-a modo _excec_ para lo que hay que indicar ahora la ruta completa a `dd`
-Luego el default `bs=10M` lo ponemos en CMD para que sea fácil reemplazarlo.
+Entonces, cambiamos el ENTRYPOINT a modo _excec_ para lo que hay que indicar ahora la ruta completa a `dd` Luego el default `bs=10M` lo ponemos en CMD para que sea fácil reemplazarlo.
 
 ```text
 FROM alpine:latest
@@ -304,9 +304,7 @@ $ docker ps -asn 2 --format "{{ .Size }}"
 10.5MB (virtual 16.1MB)
 ```
 
-> Nota: no encontré la manera de poder correr pasando como argumento `100M` así solo, si no que tiene que
-> empezar con **bs=**, de otra forma `dd` no lo reconoce. No encontré como "armar" el parámetro
-> por ejemplo `bs=$1` para tomar los argumentos del `docker run`
+> Nota: no encontré la manera de poder correr pasando como argumento `100M` así solo, si no que tiene que empezar con **bs=**, de otra forma `dd` no lo reconoce. No encontré como "armar" el parámetro por ejemplo `bs=$1` para tomar los argumentos del `docker run`
 
 ### **5.** Modifique la imagen anterior para que se fuerce a correr con un usuario diferente a ROOT
 
@@ -325,11 +323,9 @@ ENTRYPOINT ["/bin/dd", "if=/dev/zero", "count=1", "of=created-file"]
 CMD ["bs=10M"]
 ```
 
-La línea `RUN whoami && ls -l $HOME` es símplemente para checkear que el usuario se haya
-creado correctamente y que tenga los permisos de escritura necesarios
+La línea `RUN whoami && ls -l $HOME` es símplemente para checkear que el usuario se haya creado correctamente y que tenga los permisos de escritura necesarios
 
-Para no cambiar los permisos de la carpeta `/tmp` se crea otra carpeta en el home del usuario,
-donde se trabajará.
+Para no cambiar los permisos de la carpeta `/tmp` se crea otra carpeta en el home del usuario, donde se trabajará.
 
 ### **6.** Utilizando el concepto de multistage builds, genere una imagen de docker que contenga el sitio web de mikroways. Los fuentes del sitio, están disponibles en [un repositorio en github](https://github.com/Mikroways/mikroways.net/). Para poder construir el sitio, es necesario partir de una imagen de **ruby versión 2.7**, clonar el repositorio usando git, instalar las dependencias y luego generar el sitio estático usando [jekyll](https://jekyllrb.com/). A continuación mostramos la secuencia de comandos para construir el sitio y obtener en la carpeta `_site/` el sitio estático. Ese contenido deberá incluirlo en un web server de contenidos estáticos como ser **nginx**
 
@@ -390,7 +386,7 @@ Se puede ver en:
 
 `docker build -t juanpsm/test-git .`
 
-`Sending build context to Docker daemon`  **62.98kB**
+`Sending build context to Docker daemon` **62.98kB**
 
 ...
 
@@ -430,15 +426,12 @@ IMAGE          CREATED          CREATED BY                                      
 cb82b802ac69   39 seconds ago   /bin/sh -c chmod 400 /app/*                     2.1MB     
 da2dc0b50d6d   49 seconds ago   /bin/sh -c #(nop) ADD dir:8c7507505a8b764eff…   2.1MB     
 69593048aa3a   6 weeks ago      /bin/sh -c #(nop)  CMD ["sh"]                   0B        
-<missing>      6 weeks ago      /bin/sh -c #(nop) ADD file:ab1db978794665f04…   1.24MB 
+<missing>      6 weeks ago      /bin/sh -c #(nop) ADD file:ab1db978794665f04…   1.24MB
 ```
 
-Lo que sucede es que cada capa de la imágen (el ADD y el RUN).
-Como se explica en [ADD or COPY](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy),
-es mejor usar COPY para este caso. Igualmente eso no lo soluciona, el problema es el RUN. Ahi es donde se repite la indormacion de la capa, se modifican los pormisos del los archivos y se vuelven a copiar en otra capa.
+Lo que sucede es que cada capa de la imágen \(el ADD y el RUN\). Como se explica en [ADD or COPY](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy), es mejor usar COPY para este caso. Igualmente eso no lo soluciona, el problema es el RUN. Ahi es donde se repite la indormacion de la capa, se modifican los pormisos del los archivos y se vuelven a copiar en otra capa.
 
-Para resolver esto se encuentra en [desarrollo](https://github.com/moby/moby/pull/36123) agregar un flag `--chmod` al comando
-COPY. Para utilizarlo hay que [Habilitar las Buildkit builds](https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds).
+Para resolver esto se encuentra en [desarrollo](https://github.com/moby/moby/pull/36123) agregar un flag `--chmod` al comando COPY. Para utilizarlo hay que [Habilitar las Buildkit builds](https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds).
 
 ```bash
 FROM busybox
@@ -460,7 +453,7 @@ IMAGE          CREATED          CREATED BY                                      
 648ec77c3289   44 seconds ago   COPY file-2 /app/ # buildkit                    1.05MB    buildkit.dockerfile.v0
 <missing>      46 seconds ago   COPY file-1 /app/ # buildkit                    1.05MB    buildkit.dockerfile.v0
 <missing>      6 weeks ago      /bin/sh -c #(nop)  CMD ["sh"]                   0B        
-<missing>      6 weeks ago      /bin/sh -c #(nop) ADD file:ab1db978794665f04…   1.24MB    
+<missing>      6 weeks ago      /bin/sh -c #(nop) ADD file:ab1db978794665f04…   1.24MB
 ```
 
 ### 10. Es una buena práctica escribir entrypoints como shell scripts bash o bourn shell. Esos scripts en sus primeras líneas suelen utilizar la sentencia `set -eo pipefail`. Analice por qué es tan importante utilizar esas opciones
@@ -510,3 +503,4 @@ docker ps -al --format '{{ .Status }}'
 ## Entregables
 
 ### Los ejercicios a entregar son 1, 2, 3, 4, 5, 6, 9. Las entregas deben responder a las preguntas de cada ejercicio, los comandos o el Dockerfile usados para completarlos
+

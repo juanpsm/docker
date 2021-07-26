@@ -1,3 +1,7 @@
+---
+description: Registries - Volúmenes -
+---
+
 # Actividad 3
 
 ## Registries
@@ -26,7 +30,7 @@ Descargue desde la registry creada en el ejercicio 1, la imagen eliminada recien
 * Realizar un inspect del volumen y obtener el directorio en donde se encuentra almacenado.
 * ¿Existe el archivo creado anteriormente en el directorio obtenido con el inspect?
 
-```bash 
+```bash
 $ docker run -d --name voltest --mount type=volume,target=/app nginx:latest
 $ docker exec voltest touch /app/prueba.txt
 $ docker inspect voltest
@@ -114,8 +118,6 @@ $ docker stop voltest
 voltest
 $ docker volume ls
 DRIVER    VOLUME NAME
-
-
 ```
 
 ### **4.** Crear un contenedor con un **volumen nombrado**
@@ -227,14 +229,11 @@ $ docker logs $(docker ps -lq)
 NOTE: Configuring authentication for SERVER mode.
 
 [2021-07-22 18:56:47 +0000] [1] [INFO] Starting gunicorn 20.1.0
-[2021-07-22 18:56:47 +0000] [1] [INFO] Listening at: http://[::]:80 (1)
 [2021-07-22 18:56:47 +0000] [1] [INFO] Using worker: gthread
 [2021-07-22 18:56:48 +0000] [92] [INFO] Booting worker with pid: 92
-
 ```
 
-En la interfaz cuando queria agregar un servidos no reconocía **db**
-entonces:
+En la interfaz cuando queria agregar un servidos no reconocía **db** entonces:
 
 ```bash
 $ docker inspect psql-docker
@@ -248,18 +247,16 @@ $ docker inspect psql-docker
                     "EndpointID": "c4d281f08bb0e2c7c7fc44c1338df1016b9639c894f86143b859822f16631fa4",
                     "Gateway": "172.17.0.1",
                     "IPAddress": "172.17.0.2",
-
 ```
 
-Probando con el IP en el campo name/address funca.
-Creo bd "prueba".
+Probando con el IP en el campo name/address funca. Creo bd "prueba".
 
 ```bash
 $ docker rm -f psql-docker
 $ sudo ls /var/lib/docker/volumes/psql-data/_data
-base	      pg_dynshmem    pg_logical    pg_replslot	 pg_stat      pg_tblspc    pg_wal		 postgresql.conf
-global	      pg_hba.conf    pg_multixact  pg_serial	 pg_stat_tmp  pg_twophase  pg_xact		 postmaster.opts
-pg_commit_ts  pg_ident.conf  pg_notify	   pg_snapshots  pg_subtrans  PG_VERSION   postgresql.auto.conf
+base          pg_dynshmem    pg_logical    pg_replslot     pg_stat      pg_tblspc    pg_wal         postgresql.conf
+global          pg_hba.conf    pg_multixact  pg_serial     pg_stat_tmp  pg_twophase  pg_xact         postmaster.opts
+pg_commit_ts  pg_ident.conf  pg_notify       pg_snapshots  pg_subtrans  PG_VERSION   postgresql.auto.conf
 
 $ docker run -d --name=psql-docker \
  -e 'POSTGRES_PASSWORD=psql-docker' \
@@ -279,7 +276,7 @@ docker exec -it psql-docker psql -U postgres
 psql (12.7 (Debian 12.7-1.pgdg100+1))
 Type "help" for help.
 
-postgres=# 
+postgres=#
 ```
 
 No pide password ya que la obtiene de las variables de entorno seteadas al momento de crear el contenedor.
@@ -294,3 +291,4 @@ No pide password ya que la obtiene de las variables de entorno seteadas al momen
 ## Entregables
 
 ### Los ejercicios a entregar son sobre volúmenes y únicamente 2, 3 y 9. Las entregas deben responder a las preguntas de cada ejercicio o los comandos usados para completarlos
+
