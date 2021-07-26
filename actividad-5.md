@@ -1,16 +1,4 @@
-﻿
-
-**Actividad 5**
-
-Fundamentos de docker
-
-Mikroways
-
-
-
-
-
-Actividad 5
+# Actividad 5
 
 **Docker Compose**
 
@@ -74,10 +62,6 @@ Mikroways
 
 2
 
-
-
-
-
 Actividad 5
 
 • Acceder al redmine con usuario admin y password admin y navegar el sistema.
@@ -96,7 +80,7 @@ tionals usando:
 
 1
 
-git clone -b v3-stable https://github.com/AlphaNodes/additionals.
+git clone -b v3-stable [https://github.com/AlphaNodes/additionals](https://github.com/AlphaNodes/additionals).
 
 git plugins/additionals
 
