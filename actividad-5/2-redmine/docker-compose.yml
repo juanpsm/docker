@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: supersecretkey
+      MYSQL_DATABASE: redmine
+      MYSQL_USER: redmine
+      MYSQL_PASSWORD: secret
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: supersecretkey
+
+  redmine:
+    image: redmine:4.2.1
+    volumes:
+      - redmine_data:/usr/src/redmine/files
+      - ./plugins:/usr/src/redmine/plugins
+    ports:
+      - "8000:3000"
+    restart: always
+    environment:
+      REDMINE_DB_MYSQL: db
+      REDMINE_DB_USERNAME: redmine
+      REDMINE_DB_PASSWORD: secret
+      REDMINE_SECRET_KEY_BASE: supersecretkey2
+      REDMINE_PLUGINS_MIGRATE: 1
+volumes:
+  db_data: {}
+  redmine_data: {}
