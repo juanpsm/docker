@@ -7,7 +7,7 @@ services:
       - db_data:/var/lib/mysql
     restart: always
     environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: supersecretkey
+      MYSQL_ROOT_PASSWORD: supersecretkey
       MYSQL_DATABASE: redmine
       MYSQL_USER: redmine
       MYSQL_PASSWORD: secret
@@ -31,9 +31,10 @@ services:
     restart: always
     environment:
       REDMINE_DB_MYSQL: db
+      REDMINE_DB_NAME: redmine
       REDMINE_DB_USERNAME: redmine
       REDMINE_DB_PASSWORD: secret
-      REDMINE_SECRET_KEY_BASE: supersecretkey2
+      REDMINE_SECRET_KEY_BASE: supersecretkey
       REDMINE_PLUGINS_MIGRATE: 1
 volumes:
   db_data: {}

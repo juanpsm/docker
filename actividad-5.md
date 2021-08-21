@@ -195,8 +195,17 @@ Ejecutando **`docker-compose COMANDO --help`** se obtiene una descripción y for
 
 2. Indicar las diferencias entre los siguientes comandos:
    * **`docker-compose create`** y **`docker-compose up`**
+     
+     El `create` no arranca los servicios. Además está _deprecated_.
+
    * **`docker-compose stop`** y **`docker-compose down`**
+     
+     El `down` además borra los contenedores y redes.
+
    * **`docker-compose run`** y **`docker-compose exec`**
+     
+     EL `run` crea un contenedor nuevo para ejecutar el comando, mientras el 
+     `exec` lo corre en uno existente que ya esté corriendo.
 
 3. Redmine
    * Siguiendo la documentación de la imagen oficial de redmine instanciarlo usando el compose propuesto en su máquina.
@@ -211,7 +220,7 @@ Ejecutando **`docker-compose COMANDO --help`** se obtiene una descripción y for
             - db_data:/var/lib/mysql
           restart: always
           environment:
-            MYSQL_RANDOM_ROOT_PASSWORD: supersecretkey
+            MYSQL_ROOT_PASSWORD: supersecretkey
             MYSQL_DATABASE: redmine
             MYSQL_USER: redmine
             MYSQL_PASSWORD: secret
@@ -236,7 +245,7 @@ Ejecutando **`docker-compose COMANDO --help`** se obtiene una descripción y for
             REDMINE_DB_MYSQL: db
             REDMINE_DB_USERNAME: redmine
             REDMINE_DB_PASSWORD: secret
-            REDMINE_SECRET_KEY_BASE: supersecretkey2
+            REDMINE_SECRET_KEY_BASE: supersecretkey
       volumes:
         db_data: {}
         redmine_data: {}
@@ -271,13 +280,40 @@ Ejecutando **`docker-compose COMANDO --help`** se obtiene una descripción y for
      Agrego un volumen:
      `- ./plugins:/usr/src/redmine/plugins`
 
-     Donde previamente descargué el plugin de github
+     Donde previamente descargué el plugin de github.
 
-     importante variable `REDMINE_PLUGINS_MIGRATE: 1`
+     Importante variable `REDMINE_PLUGINS_MIGRATE: 1`
 
 4. Cambiar el ejercicio anterior para que construya una imagen de Redmine con el plugin mencionado incorporado.
 
-  Nota: la rama `v3-stable` ya no existe
+  > Nota: la rama `v3-stable` ya no existe
+  
+  ```bash
+  git clone -b stable https://github.com/AlphaNodes/additionals.git plugins/additionals
+  ```
+  
+  Luego modificar la parte del servicio de redmine:
+  
+  ```yaml
+    redmine:
+      image: redmine:4.2.1
+      volumes:
+        - redmine_data:/usr/src/redmine/files
+        - ./plugins:/usr/src/redmine/plugins
+      ports:
+        - "8000:3000"
+      restart: always
+      environment:
+        REDMINE_DB_MYSQL: db
+        REDMINE_DB_USERNAME: redmine
+        REDMINE_DB_PASSWORD: secret
+        REDMINE_SECRET_KEY_BASE: supersecretkey
+        REDMINE_PLUGINS_MIGRATE: 1
+  ```
+  
+  Si hay problemas eliminar los volumenes y demás y volver a empezar
+  
+  Tuve que hacer un `docker system prune --volumes`
 
 5. Indique los comandos para conectar con el servicio de redmine directamente con la consola de ruby on rails. En esa consola ejecutar
 
@@ -290,6 +326,29 @@ Ejecutando **`docker-compose COMANDO --help`** se obtiene una descripción y for
    Luego, vuelva a iniciar sesión verificando que la contraseña del usuario **admin** ahora es **Mikroways2020**
 
    > Para conectar a la consola de rails, se corre el comando **rails console**
+   
+    ```bash
+    $ docker exec -it 2-redmine_redmine_1 rails console
+    W, [2021-08-21T23:39:26.349660 #46]  WARN -- : Creating scope :system. Overwriting existing method Enumeration.system.
+    W, [2021-08-21T23:39:26.473294 #46]  WARN -- : Creating scope :sorted. Overwriting existing method User.sorted.
+    W, [2021-08-21T23:39:26.480191 #46]  WARN -- : Creating scope :sorted. Overwriting existing method Group.sorted.
+    W, [2021-08-21T23:39:26.483026 #46]  WARN -- : Creating scope :visible. Overwriting existing method Principal.visible.
+    Loading production environment (Rails 5.2.5)
+    irb(main):001:0> user = User.find_by_login: 'admin'
+    Traceback (most recent call last):
+    SyntaxError ((irb):1: syntax error, unexpected ':')
+    user = User.find_by_login: 'admin'
+                             ^
+    irb(main):002:0> user = User.find_by_login 'admin'
+    => #<User id: 1, login: "admin", hashed_password: "7d274dee86f3158ba98b3880d79830dc2a44e0ff", firstname: "Redmine", lastname: "Admin", admin: true,...
+    irb(main):003:0> user.password = 'Mikroways2020'
+    => "Mikroways2020"
+    irb(main):004:0> user.save!
+    => true
+    irb(main):005:0> exit
+    ```
+    
+    Ahora en [localhost:8000] loguearse con ese usuario y contraseña
 
 ## Entregables
 
